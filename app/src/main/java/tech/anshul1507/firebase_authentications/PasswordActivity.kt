@@ -2,6 +2,7 @@ package tech.anshul1507.firebase_authentications
 
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
@@ -16,7 +17,7 @@ class PasswordActivity : AppCompatActivity() {
         ActivityPasswordBinding.inflate(layoutInflater)
     }
 
-    private var flagPattern: Int = 1
+    private var flagPattern: Int = 0
     private lateinit var mAuth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,7 +39,7 @@ class PasswordActivity : AppCompatActivity() {
 
     private fun initApp() {
         // Hide name et for login pattern
-//        viewBinding.nameEt.visibility = View.INVISIBLE
+        viewBinding.nameEt.visibility = View.INVISIBLE
 
         mAuth = Firebase.auth
         onClickListeners()
@@ -98,7 +99,24 @@ class PasswordActivity : AppCompatActivity() {
     }
 
     private fun emailLoginMethod() {
-        //TODO:: Login Using Email and Password method
+        val mail = viewBinding.emailEt.text.toString()
+        val password = viewBinding.passwordEt.text.toString()
+
+        mAuth.signInWithEmailAndPassword(mail, password)
+            .addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    // Sign in success, update UI with the signed-in user's information
+                    logger("sign in email success")
+                    //UpdateUI()
+                } else {
+                    // If sign in fails, display a message to the user.
+                    logger("sign in email failure")
+                    Toast.makeText(
+                        baseContext, "Authentication failed. Retry",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
     }
 
     private fun emailSignUpMethod() {
