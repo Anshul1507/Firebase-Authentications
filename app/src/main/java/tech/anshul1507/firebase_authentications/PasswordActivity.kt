@@ -86,13 +86,35 @@ class PasswordActivity : AppCompatActivity() {
          * 1 => Sign up
          * 2 => Reset
          */
-        //TODO:: Editext needs to check for empty value
+        // Global Check for mail, not to be null (Primary Key in all 3 cases)
+        if (viewBinding.emailEt.text.isNullOrEmpty()) {
+            Toast.makeText(this, "Please type your email", Toast.LENGTH_SHORT).show()
+            return
+        }
         when (flagPattern) {
             0 -> {
-                emailLoginMethod()
+                if (viewBinding.passwordEt.text.isNotEmpty()) {
+                    emailLoginMethod()
+                } else {
+                    Toast.makeText(this, "Please type your password", Toast.LENGTH_SHORT)
+                        .show()
+                }
             }
             1 -> {
-                emailSignUpMethod()
+                if (viewBinding.nameEt.text.isNotEmpty() && viewBinding.passwordEt.text.isNotEmpty()) {
+                    emailSignUpMethod()
+                } else {
+                    when (viewBinding.nameEt.text.isNullOrEmpty()) {
+                        true -> {
+                            Toast.makeText(this, "Please type your name", Toast.LENGTH_SHORT)
+                                .show()
+                        }
+                        false -> {
+                            Toast.makeText(this, "Please type your password", Toast.LENGTH_SHORT)
+                                .show()
+                        }
+                    }
+                }
             }
             else -> {
                 emailResetMethod()
