@@ -1,5 +1,6 @@
 package tech.anshul1507.firebase_authentications
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -11,13 +12,14 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import tech.anshul1507.firebase_authentications.databinding.ActivityPasswordBinding
 
+
 class PasswordActivity : AppCompatActivity() {
 
     private val viewBinding: ActivityPasswordBinding by lazy {
         ActivityPasswordBinding.inflate(layoutInflater)
     }
 
-    private var flagPattern: Int = 0
+    private var flagPattern: Int = 2
     private lateinit var mAuth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -85,6 +87,7 @@ class PasswordActivity : AppCompatActivity() {
          * 1 => Sign up
          * 2 => Reset
          */
+        //TODO:: Editext needs to check for empty value
         when (flagPattern) {
             0 -> {
                 emailLoginMethod()
@@ -165,7 +168,25 @@ class PasswordActivity : AppCompatActivity() {
     }
 
     private fun emailResetMethod() {
-        //TODO:: Reset Password method
+        val mail = viewBinding.emailEt.text.toString()
+
+        Firebase.auth.sendPasswordResetEmail(mail)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    logger("email reset mail success")
+                    Toast.makeText(
+                        baseContext, "Reset Password Link sent to your mail",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    finish()
+                } else {
+                    logger("email reset mail failure")
+                    Toast.makeText(
+                        baseContext, "Failure. Retry",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
     }
 
     private fun handleSignUpTextClickListener() {
