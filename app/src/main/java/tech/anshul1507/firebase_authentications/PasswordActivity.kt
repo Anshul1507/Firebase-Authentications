@@ -1,5 +1,6 @@
 package tech.anshul1507.firebase_authentications
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -44,15 +45,6 @@ class PasswordActivity : AppCompatActivity() {
 
         mAuth = Firebase.auth
         onClickListeners()
-    }
-
-    public override fun onStart() {
-        super.onStart()
-        // Check if user is signed in (non-null) and update UI accordingly.
-        val currentUser = mAuth.currentUser
-        if (currentUser != null) {
-            //updateUI()
-        }
     }
 
     private fun onClickListeners() {
@@ -134,7 +126,7 @@ class PasswordActivity : AppCompatActivity() {
                 if (task.isSuccessful) {
                     // Sign in success, update UI with the signed-in user's information
                     logger("sign in email success")
-                    //UpdateUI()
+                    updateUI()
                 } else {
                     // If sign in fails, display a message to the user.
                     logger("sign in email failure")
@@ -179,7 +171,7 @@ class PasswordActivity : AppCompatActivity() {
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     logger("sign up name update success")
-                    //TODO::updateUI()
+                    updateUI()
                 } else {
                     // If sign in fails, display a message to the user.
                     logger("sign up name update failed")
@@ -241,6 +233,19 @@ class PasswordActivity : AppCompatActivity() {
         viewBinding.passwordEt.visibility = View.GONE
         viewBinding.emailBtn.text = "Reset Password"
         flagPattern = 2
+    }
+
+    /**
+     * Update UI function
+     */
+    private fun updateUI() {
+        val intent = Intent(this, HomeActivity::class.java)
+        intent.addFlags(
+            Intent.FLAG_ACTIVITY_CLEAR_TOP or
+                    Intent.FLAG_ACTIVITY_CLEAR_TASK or
+                    Intent.FLAG_ACTIVITY_NEW_TASK
+        )
+        startActivity(intent)
     }
 
     private fun logger(s: String) {
