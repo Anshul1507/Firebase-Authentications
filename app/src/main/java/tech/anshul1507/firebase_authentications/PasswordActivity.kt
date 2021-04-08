@@ -1,10 +1,13 @@
 package tech.anshul1507.firebase_authentications
 
-import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
-import tech.anshul1507.firebase_authentications.databinding.ActivityMainBinding
+import android.util.Log
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.UserProfileChangeRequest
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import tech.anshul1507.firebase_authentications.databinding.ActivityPasswordBinding
 
 class PasswordActivity : AppCompatActivity() {
@@ -13,7 +16,8 @@ class PasswordActivity : AppCompatActivity() {
         ActivityPasswordBinding.inflate(layoutInflater)
     }
 
-    private var flagPattern: Int = 0
+    private var flagPattern: Int = 1
+    private lateinit var mAuth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,9 +38,19 @@ class PasswordActivity : AppCompatActivity() {
 
     private fun initApp() {
         // Hide name et for login pattern
-        viewBinding.nameEt.visibility = View.INVISIBLE
+//        viewBinding.nameEt.visibility = View.INVISIBLE
 
+        mAuth = Firebase.auth
         onClickListeners()
+    }
+
+    public override fun onStart() {
+        super.onStart()
+        // Check if user is signed in (non-null) and update UI accordingly.
+        val currentUser = mAuth.currentUser
+        if (currentUser != null) {
+            //updateUI()
+        }
     }
 
     private fun onClickListeners() {
@@ -58,7 +72,7 @@ class PasswordActivity : AppCompatActivity() {
         /**
          *  Reset Password text click listener
          * */
-        viewBinding.signUpEmailTv.setOnClickListener {
+        viewBinding.forgotPasswordEmailTv.setOnClickListener {
             handleResetPasswordTextClickListener()
         }
     }
@@ -88,7 +102,48 @@ class PasswordActivity : AppCompatActivity() {
     }
 
     private fun emailSignUpMethod() {
-        //TODO:: Sign up method
+        // Getting Run-time name, email and password
+        val name = viewBinding.nameEt.text.toString()
+        val mail = viewBinding.emailEt.text.toString()
+        val password = viewBinding.passwordEt.text.toString()
+
+        mAuth.createUserWithEmailAndPassword(mail, password).addOnCompleteListener(this) { task ->
+            if (task.isSuccessful) {
+                // Sign in success, update UI with the signed-in user's information
+                logger("sign up email success")
+
+                updateUserInfo(name) // Updating Profile of just signed user.
+            } else {
+                // If sign in fails, display a message to the user.
+                logger("sign up email failed")
+                Toast.makeText(
+                    baseContext, "Authentication failed. Retry",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+    }
+
+    private fun updateUserInfo(name: String) {
+        val profileUpdates = UserProfileChangeRequest.Builder()
+            .setDisplayName(name)
+            //.setPhotoUri(Uri.parse("https://example.com/jane-q-user/profile.jpg"))  /* Here you can update the image of user */
+            .build()
+
+        mAuth.currentUser.updateProfile(profileUpdates)
+            .addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    logger("sign up name update success")
+                    //updateUI()
+                } else {
+                    // If sign in fails, display a message to the user.
+                    logger("sign up name update failed")
+                    Toast.makeText(
+                        baseContext, "Authentication failed. Retry",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
     }
 
     private fun emailResetMethod() {
@@ -101,5 +156,9 @@ class PasswordActivity : AppCompatActivity() {
 
     private fun handleResetPasswordTextClickListener() {
         //TODO:: Change views based on reset password pattern
+    }
+
+    private fun logger(s: String) {
+        Log.d("Logs: ", "$s")
     }
 }
