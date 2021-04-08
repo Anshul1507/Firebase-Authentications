@@ -134,7 +134,7 @@ class PasswordActivity : AppCompatActivity() {
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     logger("sign up name update success")
-                    //updateUI()
+                    //TODO::updateUI()
                 } else {
                     // If sign in fails, display a message to the user.
                     logger("sign up name update failed")
