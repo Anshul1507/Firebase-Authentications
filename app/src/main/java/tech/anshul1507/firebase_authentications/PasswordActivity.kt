@@ -1,6 +1,5 @@
 package tech.anshul1507.firebase_authentications
 
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -19,7 +18,7 @@ class PasswordActivity : AppCompatActivity() {
         ActivityPasswordBinding.inflate(layoutInflater)
     }
 
-    private var flagPattern: Int = 2
+    private var flagPattern: Int = 0
     private lateinit var mAuth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -101,6 +100,9 @@ class PasswordActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Login/Sign up/Reset Methods
+     */
     private fun emailLoginMethod() {
         val mail = viewBinding.emailEt.text.toString()
         val password = viewBinding.passwordEt.text.toString()
@@ -189,12 +191,34 @@ class PasswordActivity : AppCompatActivity() {
             }
     }
 
+    /**
+     * UI Checks for all patterns
+     */
     private fun handleSignUpTextClickListener() {
-        //TODO:: Change views based on sign up pattern
+        when (flagPattern) {
+            0 -> {
+                //On sign up screen, text view contains the info of sign in
+                viewBinding.signUpEmailTv.text = "Signed up already? Click to Login"
+                viewBinding.nameEt.visibility = View.VISIBLE
+                viewBinding.emailBtn.text = "Sign up"
+                flagPattern = 1 //to handle button as sign up button
+            }
+            else -> {
+                //On sign in, text view contains the info of sign up
+                viewBinding.signUpEmailTv.text = "Hadn't Signed in with yet? Click to sign up"
+                viewBinding.nameEt.visibility = View.INVISIBLE
+                viewBinding.emailBtn.text = "Login"
+                flagPattern = 0
+            }
+        }
     }
 
     private fun handleResetPasswordTextClickListener() {
-        //TODO:: Change views based on reset password pattern
+        viewBinding.signUpEmailTv.visibility = View.GONE
+        viewBinding.nameEt.visibility = View.INVISIBLE
+        viewBinding.passwordEt.visibility = View.GONE
+        viewBinding.emailBtn.text = "Reset Password"
+        flagPattern = 2
     }
 
     private fun logger(s: String) {
