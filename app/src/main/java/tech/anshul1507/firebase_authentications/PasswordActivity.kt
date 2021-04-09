@@ -129,6 +129,7 @@ class PasswordActivity : AppCompatActivity() {
                     updateUI()
                 } else {
                     // If sign in fails, display a message to the user.
+                    // TODO:: More clear error message in toast to user or regex to check email
                     logger("sign in email failure")
                     Toast.makeText(
                         baseContext, "Authentication failed. Retry",
